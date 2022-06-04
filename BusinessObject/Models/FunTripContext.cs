@@ -19,6 +19,7 @@ namespace BusinessObject.Models
 
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<Area> Areas { get; set; }
+        public virtual DbSet<AreaGroup> AreaGroups { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<City> Cities { get; set; }
         public virtual DbSet<District> Districts { get; set; }
@@ -67,6 +68,8 @@ namespace BusinessObject.Models
 
                 entity.Property(e => e.RoleId).HasColumnName("Role_ID");
 
+                entity.Property(e => e.Status).HasMaxLength(50);
+
                 entity.Property(e => e.Username)
                     .IsRequired()
                     .HasMaxLength(50)
@@ -91,10 +94,37 @@ namespace BusinessObject.Models
 
                 entity.Property(e => e.DistrictId).HasColumnName("District_ID");
 
+                entity.Property(e => e.Status).HasMaxLength(50);
+
                 entity.HasOne(d => d.District)
                     .WithMany(p => p.Areas)
                     .HasForeignKey(d => d.DistrictId)
                     .HasConstraintName("FK_Apartment_District");
+            });
+
+            modelBuilder.Entity<AreaGroup>(entity =>
+            {
+                entity.ToTable("Area_Group");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.AreaId).HasColumnName("Area_ID");
+
+                entity.Property(e => e.GroupId).HasColumnName("Group_ID");
+
+                entity.Property(e => e.Status).HasMaxLength(50);
+
+                entity.HasOne(d => d.Area)
+                    .WithMany(p => p.AreaGroups)
+                    .HasForeignKey(d => d.AreaId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Area_Group_Area");
+
+                entity.HasOne(d => d.Group)
+                    .WithMany(p => p.AreaGroups)
+                    .HasForeignKey(d => d.GroupId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Area_Group_Group");
             });
 
             modelBuilder.Entity<Category>(entity =>
@@ -106,6 +136,8 @@ namespace BusinessObject.Models
                 entity.Property(e => e.Category1)
                     .HasMaxLength(50)
                     .HasColumnName("Category");
+
+                entity.Property(e => e.Status).HasMaxLength(50);
             });
 
             modelBuilder.Entity<City>(entity =>
@@ -117,6 +149,8 @@ namespace BusinessObject.Models
                 entity.Property(e => e.City1)
                     .HasMaxLength(50)
                     .HasColumnName("City");
+
+                entity.Property(e => e.Status).HasMaxLength(50);
             });
 
             modelBuilder.Entity<District>(entity =>
@@ -128,6 +162,8 @@ namespace BusinessObject.Models
                 entity.Property(e => e.District1)
                     .HasMaxLength(100)
                     .HasColumnName("District");
+
+                entity.Property(e => e.Status).HasMaxLength(50);
             });
 
             modelBuilder.Entity<DistrictOutside>(entity =>
@@ -141,6 +177,8 @@ namespace BusinessObject.Models
                 entity.Property(e => e.CityId).HasColumnName("City_ID");
 
                 entity.Property(e => e.District).HasMaxLength(50);
+
+                entity.Property(e => e.Status).HasMaxLength(50);
 
                 entity.HasOne(d => d.City)
                     .WithMany(p => p.DistrictOutsides)
@@ -240,10 +278,7 @@ namespace BusinessObject.Models
 
                 entity.Property(e => e.Phone).HasMaxLength(50);
 
-                entity.HasOne(d => d.Apartment)
-                    .WithMany(p => p.Groups)
-                    .HasForeignKey(d => d.ApartmentId)
-                    .HasConstraintName("FK_Group_Apartment");
+                entity.Property(e => e.Status).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Order>(entity =>
@@ -270,9 +305,16 @@ namespace BusinessObject.Models
 
                 entity.Property(e => e.StartTime).HasColumnType("datetime");
 
+                entity.Property(e => e.Status).HasMaxLength(50);
+
                 entity.Property(e => e.UserId).HasColumnName("User_ID");
 
                 entity.Property(e => e.VehicleId).HasColumnName("Vehicle_ID");
+
+                entity.HasOne(d => d.Driver)
+                    .WithMany(p => p.Orders)
+                    .HasForeignKey(d => d.DriverId)
+                    .HasConstraintName("FK_Order_Driver");
 
                 entity.HasOne(d => d.Employee)
                     .WithMany(p => p.Orders)
@@ -287,7 +329,7 @@ namespace BusinessObject.Models
                 entity.HasOne(d => d.StartLocation)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.StartLocationId)
-                    .HasConstraintName("FK_Order_Area");
+                    .HasConstraintName("FK_Order_Area_Group");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Orders)
@@ -306,6 +348,8 @@ namespace BusinessObject.Models
                     .IsRequired()
                     .HasMaxLength(50)
                     .HasColumnName("Role");
+
+                entity.Property(e => e.Status).HasMaxLength(50);
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -349,6 +393,8 @@ namespace BusinessObject.Models
                 entity.Property(e => e.Manufacturer)
                     .HasMaxLength(50)
                     .HasColumnName("manufacturer");
+
+                entity.Property(e => e.Status).HasMaxLength(50);
 
                 entity.Property(e => e.VehicleName)
                     .HasMaxLength(50)

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using BusinessObject.Models;
 using DataAccess.IRepository;
 using DataAccess.DAO;
+using System.Linq.Expressions;
+
 namespace DataAccess.Repository
 {
     public class AccountRepository : IAccountRepository
@@ -14,5 +16,23 @@ namespace DataAccess.Repository
             => AccountDAO.Instance.Get(x => x.Username == username && password == x.Password);
 
         public Account CheckLoginByMail(string mail) => AccountDAO.Instance.Get(x => x.Email == mail);
+
+        public void Create(Account account) =>AccountDAO.Instance.Create(account);
+
+        public void Delete(int id)
+        {
+            Account acc = Get(id);
+            acc.Status = "Inactive";
+            AccountDAO.Instance.Update(acc);    
+        }
+
+        public Account Get(int id)
+        {
+            return AccountDAO.Instance.Get(x => x.Id == id);
+        }
+
+        public IEnumerable<Account> GetList(Expression<Func<Account, bool>> func) => AccountDAO.Instance.GetAll(func);
+
+        public void Update(Account account) => AccountDAO.Instance.Update(account);
     }
 }

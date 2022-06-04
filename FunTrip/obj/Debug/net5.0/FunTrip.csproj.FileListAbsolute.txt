@@ -61,3 +61,9 @@ C:\Users\acern\source\repos\FunTrip\FunTrip\bin\Debug\net5.0\BusinessObject.dll
 C:\Users\acern\source\repos\FunTrip\FunTrip\bin\Debug\net5.0\BusinessObject.pdb
 C:\Users\acern\source\repos\FunTrip\FunTrip\bin\Debug\net5.0\DataAccess.dll
 C:\Users\acern\source\repos\FunTrip\FunTrip\bin\Debug\net5.0\DataAccess.pdb
+C:\Users\acern\source\repos\FunTrip\FunTrip\bin\Debug\net5.0\AutoMapper.dll
+C:\Users\acern\source\repos\FunTrip\FunTrip\bin\Debug\net5.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+C:\Users\acern\source\repos\FunTrip\FunTrip\bin\Debug\net5.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\acern\source\repos\FunTrip\FunTrip\bin\Debug\net5.0\Microsoft.Extensions.Options.dll
+C:\Users\acern\source\repos\FunTrip\FunTrip\bin\Debug\net5.0\Microsoft.Extensions.Primitives.dll
+C:\Users\acern\source\repos\FunTrip\FunTrip\bin\Debug\net5.0\System.Runtime.CompilerServices.Unsafe.dll

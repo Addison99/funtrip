@@ -14,7 +14,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Text;
-
+using FunTrip.Mapper;
+using AutoMapper;
+using DataAccess.IRepository;
+using DataAccess.Repository;
 namespace FunTrip
 {
     public class Startup
@@ -31,17 +34,38 @@ namespace FunTrip
         {
 
             services.AddControllers();
-            
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperProfile());
+            });
+            //Tao mapper
+            IMapper mapper = config.CreateMapper();
+            services.AddSingleton(mapper);
+
+            //Khoi tao REpository
+            services.AddSingleton<IAccountRepository, AccountRepository>();
+            services.AddSingleton<IUserRepository, UserRepository>();
+            services.AddSingleton<IAreaGroupRepository, AreaGroupRepository>();
+            services.AddSingleton<IAreaRepository, AreaRepository>();
+            services.AddSingleton<ICategoryRepository, CategoryRepository>();
+            services.AddSingleton<ICityRepository, CityRepository>();   
+            services.AddSingleton<IDistrictOutsideRepository, DistrictOutsideRepository>();
+            services.AddSingleton<IDistrictRepository, DistrictRepository>();
+            services.AddSingleton<IDriverRepository, DriverRepository>();
+            services.AddSingleton<IEmployeeRepository, EmployeeRepository>();
+            services.AddSingleton<IGroupRepository, GroupRepository>();
+            services.AddSingleton<IOrderRepository, OrderRepository>();
+            services.AddSingleton<IRoleRepository,RoleRepository>();
+            services.AddSingleton<IVehicleRepository,VehicleRepository>();  
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = Configuration["Jwt:Issuer"],
-                        ValidAudience = Configuration["Jwt:Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                     };
                 });
@@ -60,9 +84,14 @@ namespace FunTrip
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FunTrip v1"));
             }
+            else
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FunTrip v1"));
+            }
 
             app.UseHttpsRedirection();
-
+            
             app.UseStaticFiles();
             app.UseRouting();
 
@@ -73,6 +102,7 @@ namespace FunTrip
             {
                 
                 endpoints.MapControllers();
+                endpoints.MapSwagger();
             });
         }
     }

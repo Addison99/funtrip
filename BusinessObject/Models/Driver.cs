@@ -7,6 +7,11 @@ namespace BusinessObject.Models
 {
     public partial class Driver
     {
+        public Driver()
+        {
+            Orders = new HashSet<Order>();
+        }
+
         public int Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
@@ -22,5 +27,6 @@ namespace BusinessObject.Models
         public virtual Account Account { get; set; }
         public virtual Group Group { get; set; }
         public virtual Vehicle Vehicle { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
     }
 }

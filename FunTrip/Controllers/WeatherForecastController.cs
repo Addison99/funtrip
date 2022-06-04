@@ -5,12 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FunTrip.Models;
+using BusinessObject.Models;
 namespace FunTrip.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
+       
         private static readonly string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -47,11 +49,14 @@ namespace FunTrip.Controllers
                 Speed = 100,
                 Id = 1
             });
-            var listString = Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            var listString = Enumerable.Range(1, 5).Select(index => new Account
             {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = 50,
-                Summary = "Abc"
+                Email = "tqdat123",
+                Id = 1,
+                Password ="123",
+                RoleId = 1,
+                Username = "123",
+                
             })
             .ToArray(); ;
 

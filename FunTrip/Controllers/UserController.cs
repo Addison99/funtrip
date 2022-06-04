@@ -7,6 +7,7 @@ using System.Security.Claims;
 using DataAccess.IRepository;
 using DataAccess.Repository;
 using BusinessObject.Models;
+using DataAccess.DAO;
 namespace FunTrip.Controllers
 {
     [Route("api/[controller]")]
@@ -48,11 +49,16 @@ namespace FunTrip.Controllers
 
             return Ok($"Hi {currentUser.Email}");
         }
-
+        IAccountRepository accountRepository;
         [HttpGet("Public")]
         public IActionResult Public()
         {
-            return Ok("Hi, you're on public property");
+            //accountRepository = new AccountRepository();
+            //Account acc = accountRepository.CheckLogin("son", "123");
+            FunTripContext context = new FunTripContext();
+            Account account = context.Accounts.FirstOrDefault(x=> x.Id == 1);
+            context = null;
+            return Ok("Hi, you're on public property "+ account.Email);
         }
 
         private Account GetCurrentUser()

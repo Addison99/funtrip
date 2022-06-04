@@ -17,6 +17,7 @@ namespace BusinessObject.Models
         public string Manufacturer { get; set; }
         public int CategoryId { get; set; }
         public int? GroupId { get; set; }
+        public string Status { get; set; }
 
         public virtual Category Category { get; set; }
         public virtual ICollection<Driver> Drivers { get; set; }

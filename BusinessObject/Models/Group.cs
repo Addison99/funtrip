@@ -9,6 +9,7 @@ namespace BusinessObject.Models
     {
         public Group()
         {
+            AreaGroups = new HashSet<AreaGroup>();
             Drivers = new HashSet<Driver>();
         }
 
@@ -17,8 +18,9 @@ namespace BusinessObject.Models
         public int ManagerId { get; set; }
         public int? ApartmentId { get; set; }
         public string Phone { get; set; }
+        public string Status { get; set; }
 
-        public virtual Area Apartment { get; set; }
+        public virtual ICollection<AreaGroup> AreaGroups { get; set; }
         public virtual ICollection<Driver> Drivers { get; set; }
     }
 }

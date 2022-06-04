@@ -21,10 +21,12 @@ namespace BusinessObject.Models
         public bool? IsRoundTrip { get; set; }
         public string Address { get; set; }
         public int? EmployeeId { get; set; }
+        public string Status { get; set; }
 
+        public virtual Driver Driver { get; set; }
         public virtual Employee Employee { get; set; }
         public virtual DistrictOutside EndLocation { get; set; }
-        public virtual Area StartLocation { get; set; }
+        public virtual AreaGroup StartLocation { get; set; }
         public virtual User User { get; set; }
     }
 }

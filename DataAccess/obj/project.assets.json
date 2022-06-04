@@ -5716,7 +5716,8 @@
   },
   "projectFileDependencyGroups": {
     "net5.0": [
-      "BusinessObject >= 1.0.0"
+      "BusinessObject >= 1.0.0",
+      "System.Linq.Expressions >= 4.3.0"
     ]
   },
   "packageFolders": {
@@ -5761,6 +5762,12 @@
     "frameworks": {
       "net5.0": {
         "targetAlias": "net5.0",
+        "dependencies": {
+          "System.Linq.Expressions": {
+            "target": "Package",
+            "version": "[4.3.0, )"
+          }
+        },
         "imports": [
           "net461",
           "net462",

@@ -14,6 +14,7 @@ namespace BusinessObject.Models
 
         public int Id { get; set; }
         public string Role1 { get; set; }
+        public string Status { get; set; }
 
         public virtual ICollection<Account> Accounts { get; set; }
     }
