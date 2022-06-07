@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">883022391352-alq16v01t33pi59kspbbpjl8v5ht3pl9.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">883022391352</string>
+    <string name="google_api_key" translatable="false">AIzaSyDr6KIbs_AHpJRgU0M7hULjB9S1rramIlY</string>
+    <string name="google_app_id" translatable="false">1:883022391352:android:63d9d70a21d8d0561edecd</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDr6KIbs_AHpJRgU0M7hULjB9S1rramIlY</string>
+    <string name="google_storage_bucket" translatable="false">fun-trip-82ffb.appspot.com</string>
+    <string name="project_id" translatable="false">fun-trip-82ffb</string>
+</resources>
