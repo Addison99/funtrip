@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Models;
+using DataAccess.Paging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,8 @@ namespace DataAccess.IRepository
         void Update(Account account);
         void Delete(int id);
         Account Get(int id);
+        int GetMax();
         IEnumerable<Account> GetList(Expression<Func<Account, bool>> func);
+        PagedList<Account> GetAll(Expression<Func<Account, bool>> func,PagingParams pagingParams);
     }
 }

@@ -16,13 +16,15 @@ namespace FunTrip.Controllers
     public class DriverController : ControllerBase
     {
         private IDriverRepository driverRepository;
+        private IAccountRepository accountRepository;
         private readonly IMapper mapper;
-        public DriverController(IDriverRepository _driverRepository, IMapper _mapper)
+        public DriverController(IDriverRepository _driverRepository, IMapper _mapper,IAccountRepository accountRepository)
         {
             this.driverRepository = _driverRepository;
             this.mapper = _mapper;
+            this.accountRepository = accountRepository;
         }               
-        [HttpGet("get")]
+        [HttpGet("{id}")]
         public DriverDTO Get(int id)
         {
             Driver driver = driverRepository.Get(id);
@@ -31,7 +33,16 @@ namespace FunTrip.Controllers
             else driverDTO = mapper.Map<DriverDTO>(driver);
             return driverDTO;
         }
-        [HttpGet("search")]
+        [HttpDelete("{id}")]
+        public string delete(int id)
+        {
+            Driver driver = driverRepository.Get(id);
+            driver.Account = accountRepository.Get((int)driver.AccountId);
+            driver.Account.Status = "Inactive";
+            accountRepository.Update(driver.Account);
+            return "Delete Success";
+        }
+        [HttpGet("")]
         public IEnumerable<DriverDTO> Search(string? DriverName,int? groupID, int? CategoryID,float? rate)
         {
             Dictionary<int,Driver> drivers = new Dictionary<int,Driver>();
@@ -43,7 +54,7 @@ namespace FunTrip.Controllers
             }
             if (rate != null)
             {
-                IEnumerable<Driver> driverss = driverRepository.GetList(x=> x.Orders.Sum(x => x.Rate)/ x.Orders.Count >=rate);
+                IEnumerable<Driver> driverss = driverRepository.GetList(x=> x.Orders.Average(x => x.Rate) >=rate);
                 foreach (Driver driver in driverss)
                     if (!drivers.ContainsKey(driver.Id)) drivers.Add(driver.Id, driver);
             }
@@ -59,6 +70,7 @@ namespace FunTrip.Controllers
                 foreach(Driver driver in driverss)
                     if (!drivers.ContainsKey(driver.Id)) drivers.Add(driver.Id,driver);
             }
+
             var driverDTOs = drivers.Values.Select
                                             (
                                             x => mapper.Map<DriverDTO>(x)
@@ -66,12 +78,23 @@ namespace FunTrip.Controllers
             return driverDTOs;
 
         }
-        [HttpPost("Create")]
-        public string Create(DriverDTO driverDTO)
+        [HttpPost("")]
+        public string Create([FromBody] DriverDTO driverDTO)
         {
             try
             {
                 Driver driver = mapper.Map<Driver>(driverDTO);
+                Account acc = new Account()
+                {
+                    Password = driver.Password,
+                    Username = driver.Username,
+                    Email = driver.Gmail,
+                    RoleId = 3,
+                    Status = "Active"
+                };
+                accountRepository.Create(acc);
+                int accID = accountRepository.GetMax();
+                driver.AccountId = accID;
                 driverRepository.Create(driver);
             }
             catch (Exception ex)
@@ -81,19 +104,28 @@ namespace FunTrip.Controllers
             
             return "Create Success";
         }
-        [HttpPost("Update")]
-        public string Update(Driver driver)
+        [HttpPut("")]
+        public string Update([FromBody] DriverDTO driverdto)
         {
             try
             {
-                driverRepository.Create(driver);
+                Driver driver = mapper.Map<Driver>(driverdto);
+                Driver driver1 = driverRepository.Get(driver.Id);
+                driver1.FullName = driver.FullName;
+                driver1.Address = driver.Address;
+                driver1.CreditCard = driver.CreditCard;
+                Account acc = accountRepository.Get((int)driver1.AccountId);
+                acc.Email = driverdto.Gmail;
+                acc.Password = driverdto.Password;
+                driver1.Account = acc;
+                driverRepository.Update(driver1);
             }
             catch (Exception ex)
             {
                 return ex.Message;
             }
 
-            return "Create Success";
+            return "Update Success";
         }
     }
 }

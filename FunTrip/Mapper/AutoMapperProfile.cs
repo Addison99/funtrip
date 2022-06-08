@@ -12,7 +12,8 @@ namespace FunTrip.Mapper
             CreateMap<Account, AccountDTO>();
             CreateMap<AccountDTO, Account>();
 
-            CreateMap<User, UserDTO>();
+            CreateMap<User, UserDTO>()
+                .ForMember(des=> des.NumberOfOrders, act => act.MapFrom(src => src.Orders.Count()));    
             CreateMap<UserDTO, User>();
 
             CreateMap<Area, AreaDTO>()

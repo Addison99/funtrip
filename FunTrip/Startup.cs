@@ -33,7 +33,7 @@ namespace FunTrip
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers(x=> x.AllowEmptyInputInBodyModelBinding = true);
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new AutoMapperProfile());

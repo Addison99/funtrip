@@ -1,81 +1,88 @@
-﻿using FunTrip.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using System.Security.Claims;
 using DataAccess.IRepository;
 using DataAccess.Repository;
 using BusinessObject.Models;
-using DataAccess.DAO;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using FunTrip.DTOs;
+using AutoMapper;
+
 namespace FunTrip.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
-        [HttpGet("Admin")]
-        [Authorize(Roles = "Admin")]
-        public IActionResult AdminsEndpoint()
+        IAccountRepository _accountRepository;
+        IUserRepository _userRepository;
+        IMapper _mapper;
+        public UserController(IAccountRepository accountRepository,IUserRepository userRepository,IMapper mapper)
         {
-            var currentUser = GetCurrentUser();
-
-            return Ok($"Hi {currentUser.Email}");
+            _accountRepository = accountRepository;
+            _userRepository = userRepository;
+            _mapper = mapper;
         }
-
-
-        [HttpGet("Customer")]
-        [Authorize(Roles = "Customer")]
-        public IActionResult SellersEndpoint()
+        [HttpGet("{id}")]
+        public UserDTO get(int id)
         {
-            var currentUser = GetCurrentUser();
-
-            return Ok($"Hi {currentUser.Email}");
+            return _mapper.Map<UserDTO>(_userRepository.Get(id));
         }
-
-        [HttpGet("Driver")]
-        [Authorize(Roles = "Driver")]
-        public IActionResult AdminsAndSellersEndpoint()
+        [HttpGet("")]
+        public IEnumerable<UserDTO> search(string? name, int? numberoforders)
         {
-            var currentUser = GetCurrentUser();
-
-            return Ok($"Hi {currentUser.Email}");
-        }
-        [HttpGet("Employee")]
-        [Authorize(Roles = "Employee")]
-        public IActionResult EmployeeEndpoint()
-        {
-            var currentUser = GetCurrentUser();
-
-            return Ok($"Hi {currentUser.Email}");
-        }
-        IAccountRepository accountRepository;
-        [HttpGet("Public")]
-        public IActionResult Public()
-        {
-            //accountRepository = new AccountRepository();
-            //Account acc = accountRepository.CheckLogin("son", "123");
-            FunTripContext context = new FunTripContext();
-            Account account = context.Accounts.FirstOrDefault(x=> x.Id == 1);
-            context = null;
-            return Ok("Hi, you're on public property "+ account.Email);
-        }
-
-        private Account GetCurrentUser()
-        {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-
-            if (identity != null)
+            Dictionary<int, User> dic = new Dictionary<int, User>();
+            if (name != null)
             {
-                var userClaims = identity.Claims;
-
-                return new Account
-                {
-                    Username = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value,
-                    Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value,
-                };
+                IEnumerable<User> users = _userRepository.GetList(x=> x.FullName.Contains(name) && x.Account.Status =="Active");
+                foreach(User user in users) 
+                    if (!dic.ContainsKey(user.Id)) dic.Add(user.Id, user);
             }
-            return null;
+            if (numberoforders != null)
+            {
+                IEnumerable<User> users = _userRepository.GetList(x => x.Orders.Count>=numberoforders && x.Account.Status == "Active");
+                foreach (User user in users)
+                    if (!dic.ContainsKey(user.Id)) dic.Add(user.Id, user);
+            }
+            return dic.Values.Select(x => _mapper.Map<UserDTO>(x));
+        }
+        [HttpDelete("{id}")]
+        public string delete(int id)
+        {
+            User user = _userRepository.Get(id);
+            Account acc = _accountRepository.Get((int)user.AccountId);
+            acc.Status = "Inactive";
+            return "Delete Success";
+        }
+        void updateAccount(UserDTO dto,Account acc)
+        {
+            acc.Password = dto.Password;
+            acc.Email = dto.Email;
+            acc.Status = "Active";
+        }
+        [HttpPost("")]
+        public string create([FromBody] UserDTO dto)
+        {
+            User user = _mapper.Map<User>(dto);
+            Account acc = new Account();
+            acc.Username = dto.Username;
+            updateAccount(dto, acc);
+            _accountRepository.Create(acc);
+            int id = _accountRepository.GetMax();
+            user.AccountId = id;
+            _userRepository.Create(user);
+            return "Create Success";
+        }
+        [HttpPut("")]
+        public string update([FromBody] UserDTO dto)
+        {
+            User user = _mapper.Map<User>(dto);
+            Account account = _accountRepository.Get((int)user.AccountId);
+            updateAccount(dto, account);
+            user.Account = account;
+            _userRepository.Update(user);
+            return "Update Success";
         }
     }
 }
