@@ -35,10 +35,16 @@ namespace FunTrip.Controllers
             return "OK";
         }
         [HttpGet("")]
-        public IEnumerable<CityDTO> search(string? name)
+        public IEnumerable<CityDTO> search(string? name, int pageNumber, int pageSize)
         {
-            return _cityRepository.GetList(x=> x.City1.Contains(name) && x.Status == "Active")
-                .Select(x => _mapper.Map<CityDTO>(x));
+            PagingParams pagingParams = new PagingParams()
+            {
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            };
+            PagedList<City> pagedList = new PagedList<City>(_cityRepository.GetList(x => x.City1.Contains(name) && x.Status == "Active"), pageNumber, pageSize);
+            IEnumerable<CityDTO> cityDTOs = pagedList.List.Select(x => mapper.Map<CityDTO>(x));
+            return cityDTOs;
         }
         [HttpPost("")]
         public string create([FromBody] CityDTO dto)

@@ -8,6 +8,7 @@ using FunTrip.DTOs;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using DataAccess.Paging;
 
 namespace FunTrip.Controllers
 {
@@ -43,8 +44,13 @@ namespace FunTrip.Controllers
             return "Delete Success";
         }
         [HttpGet("")]
-        public IEnumerable<DriverDTO> Search(string? DriverName,int? groupID, int? CategoryID,float? rate)
+        public IEnumerable<DriverDTO> Search(string? DriverName,int? groupID, int? CategoryID, float? rate, int pageNumber, int pageSize)
         {
+            PagingParams pagingParams = new PagingParams()
+            {
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            };
             Dictionary<int,Driver> drivers = new Dictionary<int,Driver>();
             if (DriverName != null)
             {
@@ -70,11 +76,11 @@ namespace FunTrip.Controllers
                 foreach(Driver driver in driverss)
                     if (!drivers.ContainsKey(driver.Id)) drivers.Add(driver.Id,driver);
             }
-
-            var driverDTOs = drivers.Values.Select
-                                            (
-                                            x => mapper.Map<DriverDTO>(x)
-                                            );
+            PagedList<Driver> pagedList = new PagedList<Driver>(drivers.Values.AsQueryable(),pageNumber,pageSize);
+            IEnumerable<DriverDTO> driverDTOs = pagedList.List.Select
+                (
+                    x => mapper.Map<DriverDTO>(x)
+                    );
             return driverDTOs;
 
         }

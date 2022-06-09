@@ -30,8 +30,14 @@ namespace FunTrip.Controllers
             return _mapper.Map<UserDTO>(_userRepository.Get(id));
         }
         [HttpGet("")]
-        public IEnumerable<UserDTO> search(string? name, int? numberoforders)
+        public IEnumerable<UserDTO> search(string? name, int? numberoforders, int pageNumber, int pageSize)
         {
+            PagingParams pagingParams = new PagingParams()
+            {
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            };
+
             Dictionary<int, User> dic = new Dictionary<int, User>();
             if (name != null)
             {
@@ -45,7 +51,9 @@ namespace FunTrip.Controllers
                 foreach (User user in users)
                     if (!dic.ContainsKey(user.Id)) dic.Add(user.Id, user);
             }
-            return dic.Values.Select(x => _mapper.Map<UserDTO>(x));
+           PagedList<User> pagedList = new PagedList<User>(dic.Values, pageNumber, pageSize);
+            IEnumerable<UserDTO> userDTOs = pagedList.List.Select(x => mapper.Map<UserDTO>(x));
+            return userDTOs;
         }
         [HttpDelete("{id}")]
         public string delete(int id)

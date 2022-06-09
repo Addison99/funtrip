@@ -35,8 +35,13 @@ namespace FunTrip.Controllers
             districtRepository.Update(district);
         }
         [HttpGet("")]
-        public IEnumerable<DistrictDTO> search(string? name, int? numberofareas)
+        public IEnumerable<DistrictDTO> search(string? name, int? numberofareas, int pageNumber,int pageSize)
         {
+             PagingParams pagingParams = new PagingParams()
+            {
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            };
             Dictionary<int,District> dic = new Dictionary<int,District>();
             if (numberofareas != null)
             {
@@ -52,7 +57,9 @@ namespace FunTrip.Controllers
                 foreach (District district in districts)
                     if (!dic.ContainsKey(district.Id)) dic.Add(district.Id, district);
             }
-            return dic.Values.Select(x => mapper.Map<DistrictDTO>(x));
+                        PagedList<District> pagedList = new PagedList<District>(dic.Values, pageNumber, pageSize);
+            IEnumerable<DistrictDTO> districtDTOs = pagedList.List.Select(x => mapper.Map<DistrictDTO>(x));
+            return districtDTOs;          
         }
         [HttpPut("")]
         public string update([FromBody] DistrictDTO dto)

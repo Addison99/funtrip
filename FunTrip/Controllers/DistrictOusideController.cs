@@ -36,8 +36,13 @@ namespace FunTrip.Controllers
             _outsideRepository.Update(district);
         }
         [HttpGet("")]
-        public IEnumerable<DistrictOutsideDTO> search(string? name, string? cityName)
+        public IEnumerable<DistrictOutsideDTO> search(string? name, string? cityName, int pageNumber, int pageSize)
         {
+            PagingParams pagingParams = new PagingParams()
+            {
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            };
             Dictionary<int, DistrictOutside> dic = new Dictionary<int, DistrictOutside>();
             if (name != null)
             {
@@ -51,7 +56,9 @@ namespace FunTrip.Controllers
                 foreach (var district in districts)
                     if (!dic.ContainsKey(district.Id)) dic.Add(district.Id, district);
             }
-            return dic.Values.Select(x => _mapper.Map<DistrictOutsideDTO>(x));
+           PagedList<DistrictOutside> pagedList = new PagedList<DistrictOutside>(dic.Values, pageNumber, pageSize);
+            IEnumerable<DistrictOutsideDTO> districtOutsideDTOs = pagedList.List.Select(x => mapper.Map<DistrictOutsideDTO>(x));
+            return districtOutsideDTOs;
         }
         [HttpPost("")]
         public string create([FromBody]DistrictOutsideDTO dto)

@@ -28,6 +28,8 @@ namespace FunTrip.Controllers
         {
             return mapper.Map<AreaDTO>(areaRepository.Get(id));
         }
+         [HttpGet("{pageNumber}/{pageSize}")]
+        public IEnumerable<AreaDTO> GetList(string? ApartmentName,string? Address,int? DistrictId, bool? all ,int pageNumber,int pageSize);
         [HttpDelete("{id}")]
         public string delete(int id)
         {
@@ -36,8 +38,14 @@ namespace FunTrip.Controllers
             return "Delete success";
         }
         [HttpGet("")]
-        public IEnumerable<AreaDTO> search(string? ApartmentName, string? DistrictName, int? numberOfGroups)
+        public IEnumerable<AreaDTO> search(string? ApartmentName, string? Address, int? DistrictId, string? DistrictName, int? numberOfGroups, bool? all ,int pageNumber,int pageSize)
         {
+            PagingParams pagingParams = new PagingParams()
+            {
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            };
+
             Dictionary<int, Area> dic = new Dictionary<int, Area>();
             if (ApartmentName != null)
             {
@@ -61,7 +69,13 @@ namespace FunTrip.Controllers
                     if (!dic.ContainsKey(area.Id)) dic.Add(area.Id, area);
             }
             return dic.Values.Select(x => mapper.Map<AreaDTO>(x));
+            PagedList<Area> pagedList = new PagedList<Account>(dic.Values.AsQueryable(),pageNumber,pageSize);
+            IEnumerable<AccountDTO> listDTO = pagedList.List.Select
+                (
+                    x => mapper.Map<AccountDTO>(x)
+                    );
         }
+        
         [HttpPost("")]
         public string create([FromBody] AreaDTO dto)
         {
@@ -86,5 +100,6 @@ namespace FunTrip.Controllers
             }
             return "Update Success";
         }
+        
     }
 }

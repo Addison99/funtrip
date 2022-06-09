@@ -41,8 +41,14 @@ namespace FunTrip.Controllers
         }
         [HttpGet]
         public IEnumerable<OrderDTO> search(DateTime? starttime,DateTime? endtime,string? DriverName,
-            string? EmployeeName, string? UserName, string? GroupName, string? DistrictOutsideName)
+            string? EmployeeName, string? UserName, string? GroupName, string? OrderName, int pageNumber, int pageSize)
         {
+            PagingParams pagingParams = new PagingParams()
+            {
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            };
+
             Dictionary<int,Order> dic = new Dictionary<int,Order>();
             if (starttime!=null && endtime != null)
             {
@@ -69,12 +75,14 @@ namespace FunTrip.Controllers
                 var orders = orderRepository.GetList(x => x.StartLocation.Group.GroupName.Contains(GroupName));
                 AddToDic(dic, orders);
             }
-            if (DistrictOutsideName != null)
+            if (OrderName != null)
             {
-                var orders = orderRepository.GetList(x => x.EndLocation.District.Contains(DistrictOutsideName));
+                var orders = orderRepository.GetList(x => x.EndLocation.Order.Contains(OrderName));
                 AddToDic(dic, orders);
             }
-            return dic.Values.Select(x => mapper.Map<OrderDTO>(x));
+                 PagedList<Order> pagedList = new PagedList<Order>(dic.Values, pageNumber, pageSize);
+            IEnumerable<OrderDTO> orderDTOs = pagedList.List.Select(x => mapper.Map<OrderDTO>(x));
+            return orderDTOs;
         }
         [HttpPost("")]
         public string Create([FromBody] OrderDTO dto)

@@ -35,9 +35,16 @@ namespace FunTrip.Controllers
             return mapper.Map<EmployeeDTO>(employee);
         }
         [HttpGet("{name}")]
-        public IEnumerable<EmployeeDTO> getlist(string name)
+        public IEnumerable<EmployeeDTO> getlist(string name, int pageNumber, int pageSize)
         {
-            return employeeRepository.GetList(x=> x.FullName.Contains(name) && x.Account.Status =="Active").Select(x=>mapper.Map<EmployeeDTO>(x));
+            PagingParams pagingParams = new PagingParams()
+            {
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            };
+            PagedList<Employee> pagedList = new PagedList<Employee>(employeeRepository.GetList(x=> x.FullName.Contains(name) && x.Account.Status =="Active"), pageNumber, pageSize);
+            IEnumerable<EmployeeDTO> employeeDTOs = pagedList.List.Select(x => mapper.Map<EmployeeDTO>(x));
+            return employeeDTOs; 
         }
         [HttpDelete("{id}")]
         public string delete(int id)

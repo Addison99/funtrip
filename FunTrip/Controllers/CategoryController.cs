@@ -35,16 +35,27 @@ namespace FunTrip.Controllers
             try
             {
                 categoryRepository.Update(category);
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return ex.Message.ToString();
             }
             return "OK";
         }
         [HttpGet("")]
-        public IEnumerable<CategoryDTO> search()
+        public IEnumerable<CategoryDTO> search(int pageNumber, int pageSize)
         {
-            return categoryRepository.GetList(null).Select(x=> mapper.Map<CategoryDTO>(x));
+            PagingParams pagingParams = new PagingParams()
+            {
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            };
+            PagedList<Category> pagedList = new PagedList<Category>(categoryRepository.GetList(null), pageNumber, pageSize);
+            IEnumerable<CategoryDTO> categoryDTOs = pagedList.List.Select
+                (
+                    x => mapper.Map<CategoryDTO>(x)
+                    );
+            return categoryDTOs;
         }
         [HttpPost("")]
         public string create([FromBody] CategoryDTO dto)
@@ -61,7 +72,8 @@ namespace FunTrip.Controllers
             try
             {
                 categoryRepository.Update(cate);
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return ex.Message.ToString();
             }

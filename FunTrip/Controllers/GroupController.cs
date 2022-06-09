@@ -35,8 +35,14 @@ namespace FunTrip.Controllers
             groupRepository.Update(group);
         }
         [HttpGet("")]
-        public IEnumerable<GroupDTO> search(int? NumberOfMembers, int? NumberOfAreas, string? GroupName)
+        public IEnumerable<GroupDTO> search(int? NumberOfMembers, int? NumberOfAreas, string? GroupName, int pageNumber, int pageSize)
         {
+            PagingParams pagingParams = new PagingParams()
+            {
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            };
+
             Dictionary<int, Group> dic = new Dictionary<int, Group>();
             if (NumberOfMembers != null)
             {
@@ -68,7 +74,9 @@ namespace FunTrip.Controllers
                         dic.Add(group.Id, group);
                     }
             }
-            return dic.Values.Select(x => mapper.Map<GroupDTO>(x));
+                    PagedList<Group> pagedList = new PagedList<Group>(dic.Values, pageNumber, pageSize);
+            IEnumerable<GroupDTO> groupDTOs = pagedList.List.Select(x => mapper.Map<GroupDTO>(x));
+            return groupDTOs;
         }
         [HttpPut("")]
         public string update([FromBody] GroupDTO dto)
