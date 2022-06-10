@@ -44,7 +44,8 @@ namespace FunTrip.Controllers
 
             return NotFound("User not found");
         }
-       
+        
+
         private string Generate(Account user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));

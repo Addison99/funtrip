@@ -15,6 +15,7 @@ namespace BusinessObject.Models
         public int Id { get; set; }
         public string District { get; set; }
         public int? CityId { get; set; }
+        public string Status { get; set; }
 
         public virtual City City { get; set; }
         public virtual ICollection<Order> Orders { get; set; }

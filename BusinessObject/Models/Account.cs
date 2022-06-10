@@ -19,6 +19,7 @@ namespace BusinessObject.Models
         public string Password { get; set; }
         public string Email { get; set; }
         public int RoleId { get; set; }
+        public string Status { get; set; }
 
         public virtual Role Role { get; set; }
         public virtual ICollection<Driver> Drivers { get; set; }

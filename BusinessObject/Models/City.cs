@@ -14,6 +14,7 @@ namespace BusinessObject.Models
 
         public int Id { get; set; }
         public string City1 { get; set; }
+        public string Status { get; set; }
 
         public virtual ICollection<DistrictOutside> DistrictOutsides { get; set; }
     }

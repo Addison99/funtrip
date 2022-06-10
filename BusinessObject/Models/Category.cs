@@ -14,6 +14,7 @@ namespace BusinessObject.Models
 
         public int Id { get; set; }
         public string Category1 { get; set; }
+        public string Status { get; set; }
 
         public virtual ICollection<Vehicle> Vehicles { get; set; }
     }
