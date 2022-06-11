@@ -5,6 +5,7 @@ using DataAccess.Repository;
 using BusinessObject.Models;
 using System.Collections;
 using System.Collections.Generic;
+using DataAccess.Paging;
 using System.Linq;
 using FunTrip.DTOs;
 using AutoMapper;
@@ -51,8 +52,8 @@ namespace FunTrip.Controllers
                 foreach (User user in users)
                     if (!dic.ContainsKey(user.Id)) dic.Add(user.Id, user);
             }
-           PagedList<User> pagedList = new PagedList<User>(dic.Values, pageNumber, pageSize);
-            IEnumerable<UserDTO> userDTOs = pagedList.List.Select(x => mapper.Map<UserDTO>(x));
+           PagedList<User> pagedList = new PagedList<User>(dic.Values.AsQueryable(), pageNumber, pageSize);
+            IEnumerable<UserDTO> userDTOs = pagedList.List.Select(x => _mapper.Map<UserDTO>(x));
             return userDTOs;
         }
         [HttpDelete("{id}")]

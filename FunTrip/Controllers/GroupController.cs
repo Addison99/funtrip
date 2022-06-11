@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using FunTrip.DTOs;
+using DataAccess.Paging;
 using AutoMapper;
 
 namespace FunTrip.Controllers
@@ -74,7 +75,7 @@ namespace FunTrip.Controllers
                         dic.Add(group.Id, group);
                     }
             }
-                    PagedList<Group> pagedList = new PagedList<Group>(dic.Values, pageNumber, pageSize);
+                    PagedList<Group> pagedList = new PagedList<Group>(dic.Values.AsQueryable(), pageNumber, pageSize);
             IEnumerable<GroupDTO> groupDTOs = pagedList.List.Select(x => mapper.Map<GroupDTO>(x));
             return groupDTOs;
         }

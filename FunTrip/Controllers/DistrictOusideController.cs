@@ -9,6 +9,7 @@ using System.Linq;
 using FunTrip.DTOs;
 using AutoMapper;
 using System;
+using DataAccess.Paging;
 
 namespace FunTrip.Controllers
 {
@@ -56,8 +57,8 @@ namespace FunTrip.Controllers
                 foreach (var district in districts)
                     if (!dic.ContainsKey(district.Id)) dic.Add(district.Id, district);
             }
-           PagedList<DistrictOutside> pagedList = new PagedList<DistrictOutside>(dic.Values, pageNumber, pageSize);
-            IEnumerable<DistrictOutsideDTO> districtOutsideDTOs = pagedList.List.Select(x => mapper.Map<DistrictOutsideDTO>(x));
+           PagedList<DistrictOutside> pagedList = new PagedList<DistrictOutside>(dic.Values.AsQueryable(), pageNumber, pageSize);
+            IEnumerable<DistrictOutsideDTO> districtOutsideDTOs = pagedList.List.Select(x => _mapper.Map<DistrictOutsideDTO>(x));
             return districtOutsideDTOs;
         }
         [HttpPost("")]

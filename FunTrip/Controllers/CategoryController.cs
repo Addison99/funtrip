@@ -9,6 +9,7 @@ using System.Linq;
 using FunTrip.DTOs;
 using AutoMapper;
 using System;
+using DataAccess.Paging;
 namespace FunTrip.Controllers
 {
     [Route("api/[controller]")]
@@ -50,7 +51,7 @@ namespace FunTrip.Controllers
                 PageSize = pageSize,
                 PageNumber = pageNumber
             };
-            PagedList<Category> pagedList = new PagedList<Category>(categoryRepository.GetList(null), pageNumber, pageSize);
+            PagedList<Category> pagedList = new PagedList<Category>(categoryRepository.GetList(null).AsQueryable(), pageNumber, pageSize);
             IEnumerable<CategoryDTO> categoryDTOs = pagedList.List.Select
                 (
                     x => mapper.Map<CategoryDTO>(x)

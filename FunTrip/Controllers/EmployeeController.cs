@@ -9,6 +9,7 @@ using System.Linq;
 using AutoMapper;
 using FunTrip.DTOs;
 using System;
+using DataAccess.Paging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -42,7 +43,7 @@ namespace FunTrip.Controllers
                 PageSize = pageSize,
                 PageNumber = pageNumber
             };
-            PagedList<Employee> pagedList = new PagedList<Employee>(employeeRepository.GetList(x=> x.FullName.Contains(name) && x.Account.Status =="Active"), pageNumber, pageSize);
+            PagedList<Employee> pagedList = new PagedList<Employee>(employeeRepository.GetList(x=> x.FullName.Contains(name) && x.Account.Status =="Active").AsQueryable(), pageNumber, pageSize);
             IEnumerable<EmployeeDTO> employeeDTOs = pagedList.List.Select(x => mapper.Map<EmployeeDTO>(x));
             return employeeDTOs; 
         }

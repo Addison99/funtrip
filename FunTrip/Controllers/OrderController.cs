@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FunTrip.DTOs;
 using AutoMapper;
+using DataAccess.Paging;
 using System;
 
 namespace FunTrip.Controllers
@@ -41,7 +42,7 @@ namespace FunTrip.Controllers
         }
         [HttpGet]
         public IEnumerable<OrderDTO> search(DateTime? starttime,DateTime? endtime,string? DriverName,
-            string? EmployeeName, string? UserName, string? GroupName, string? OrderName, int pageNumber, int pageSize)
+            string? EmployeeName, string? UserName, string? GroupName, int pageNumber, int pageSize)
         {
             PagingParams pagingParams = new PagingParams()
             {
@@ -74,13 +75,8 @@ namespace FunTrip.Controllers
             {
                 var orders = orderRepository.GetList(x => x.StartLocation.Group.GroupName.Contains(GroupName));
                 AddToDic(dic, orders);
-            }
-            if (OrderName != null)
-            {
-                var orders = orderRepository.GetList(x => x.EndLocation.Order.Contains(OrderName));
-                AddToDic(dic, orders);
-            }
-                 PagedList<Order> pagedList = new PagedList<Order>(dic.Values, pageNumber, pageSize);
+            }          
+                 PagedList<Order> pagedList = new PagedList<Order>(dic.Values.AsQueryable(), pageNumber, pageSize);
             IEnumerable<OrderDTO> orderDTOs = pagedList.List.Select(x => mapper.Map<OrderDTO>(x));
             return orderDTOs;
         }

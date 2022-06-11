@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FunTrip.DTOs;
 using AutoMapper;
+using DataAccess.Paging;
 namespace FunTrip.Controllers
 {
     [Route("api/[controller]")]
@@ -42,8 +43,8 @@ namespace FunTrip.Controllers
                 PageSize = pageSize,
                 PageNumber = pageNumber
             };
-            PagedList<City> pagedList = new PagedList<City>(_cityRepository.GetList(x => x.City1.Contains(name) && x.Status == "Active"), pageNumber, pageSize);
-            IEnumerable<CityDTO> cityDTOs = pagedList.List.Select(x => mapper.Map<CityDTO>(x));
+            PagedList<City> pagedList = new PagedList<City>(_cityRepository.GetList(x => x.City1.Contains(name) && x.Status == "Active").AsQueryable(), pageNumber, pageSize);
+            IEnumerable<CityDTO> cityDTOs = pagedList.List.Select(x => _mapper.Map<CityDTO>(x));
             return cityDTOs;
         }
         [HttpPost("")]

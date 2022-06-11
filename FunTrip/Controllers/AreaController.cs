@@ -9,6 +9,7 @@ using System.Linq;
 using FunTrip.DTOs;
 using AutoMapper;
 using System;
+using DataAccess.Paging;
 
 namespace FunTrip.Controllers
 {
@@ -29,7 +30,21 @@ namespace FunTrip.Controllers
             return mapper.Map<AreaDTO>(areaRepository.Get(id));
         }
          [HttpGet("{pageNumber}/{pageSize}")]
-        public IEnumerable<AreaDTO> GetList(string? ApartmentName,string? Address,int? DistrictId, bool? all ,int pageNumber,int pageSize);
+        public IEnumerable<AreaDTO> GetList(string? ApartmentName,string? Address,int? DistrictId, bool? all ,int pageNumber,int pageSize)
+                {
+            PagingParams pagingParams = new PagingParams()
+            {
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            };
+            PagedList<Area> pagedList = new PagedList<Area>(areaRepository.GetList(null).AsQueryable(), pageNumber, pageSize);
+            IEnumerable<AreaDTO> areaDTOs = pagedList.List.Select
+                (
+                    x => mapper.Map<AreaDTO>(x)
+                    );
+            return areaDTOs;
+        }
+
         [HttpDelete("{id}")]
         public string delete(int id)
         {
@@ -69,10 +84,10 @@ namespace FunTrip.Controllers
                     if (!dic.ContainsKey(area.Id)) dic.Add(area.Id, area);
             }
             return dic.Values.Select(x => mapper.Map<AreaDTO>(x));
-            PagedList<Area> pagedList = new PagedList<Account>(dic.Values.AsQueryable(),pageNumber,pageSize);
-            IEnumerable<AccountDTO> listDTO = pagedList.List.Select
+            PagedList<Area> pagedList = new PagedList<Area>(dic.Values.AsQueryable(),pageNumber,pageSize);
+            IEnumerable<AreaDTO> listDTO = pagedList.List.Select
                 (
-                    x => mapper.Map<AccountDTO>(x)
+                    x => mapper.Map<AreaDTO>(x)
                     );
         }
         
