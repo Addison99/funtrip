@@ -14,5 +14,6 @@ namespace DataAccess.IRepository
         void Delete(int id);
         Employee Get(int id);
         IEnumerable<Employee> GetList(Expression<Func<Employee, bool>> func);
+        int getMax();
     }
 }

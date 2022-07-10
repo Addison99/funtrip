@@ -9,10 +9,10 @@ namespace DataAccess.IRepository
 {
     public interface IOrderRepository
     {
-        void Create(Order Order);
-        void Update(Order Order);
+        void Create(Booking rder);
+        void Update(Booking Order);
         void Delete(int id);
-        Order Get(int id);
-        IEnumerable<Order> GetList(Expression<Func<Order, bool>> func);
+        Booking Get(int id);
+        IEnumerable<Booking> GetList(Expression<Func<Booking, bool>> func);
     }
 }

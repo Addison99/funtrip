@@ -12,38 +12,37 @@ namespace DataAccess.Repository
 {
     public class OrderRepository : IOrderRepository
     {
-        public void Create(Order Order)=> OrderDAO.Instance.Create(Order);
+        public void Create(Booking Order)=> BookingDAO.Instance.Create(Order);
 
         public void Delete(int id)
         {
-            Order order = Get(id);
+            Booking order = Get(id);
             order.Status = "Inactive";
         }
-        void AddRalations(Order order)
+        void AddRalations(Booking order)
         {
             if (order == null) return;
             if (order.Driver == null) order.Driver = DriverDAO.Instance.Get(x => x.Id == order.DriverId);
             if (order.Employee ==null) order.Employee = EmployeeDAO.Instance.Get(x => x.Id == order.EmployeeId);
             if (order.StartLocation ==null) 
                 order.StartLocation = AreaGroupDAO.Instance.Get(x => x.Id == order.StartLocationId);
-            if (order.EndLocation ==null) 
-                order.EndLocation = DistrictOutsideDAO.Instance.Get(x => x.Id == order.EndLocationId);
+           
         }
-        public Order Get(int id)
+        public Booking Get(int id)
         {
-            Order order = OrderDAO.Instance.Get(x => x.Id == id);
+            Booking order = BookingDAO.Instance.Get(x => x.Id == id);
             AddRalations(order);
             return order;
         }
 
-        public IEnumerable<Order> GetList(Expression<Func<Order, bool>> func)
+        public IEnumerable<Booking> GetList(Expression<Func<Booking, bool>> func)
         {
-            IEnumerable<Order> orders = OrderDAO.Instance.GetAll(func); 
-            foreach (Order order in orders) AddRalations(order);
+            IEnumerable<Booking> orders = BookingDAO.Instance.GetAll(func); 
+            foreach (Booking order in orders) AddRalations(order);
             return orders;
         }
 
-        public void Update(Order Order) => OrderDAO.Instance.Update(Order);
+        public void Update(Booking Order) => BookingDAO.Instance.Update(Order);
 
     }
 }

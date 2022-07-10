@@ -7,11 +7,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using FunTrip.DTOs;
+using DataAccess.Paging;
 using AutoMapper;
 
 namespace FunTrip.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/groups")]
     [ApiController]
     public class GroupController : ControllerBase
     {
@@ -35,8 +36,17 @@ namespace FunTrip.Controllers
             groupRepository.Update(group);
         }
         [HttpGet("")]
-        public IEnumerable<GroupDTO> search(int? NumberOfMembers, int? NumberOfAreas, string? GroupName)
+        public IEnumerable<GroupDTO> search(bool? all,int? NumberOfMembers, int? NumberOfAreas, string? GroupName, int pageNumber, int pageSize)
         {
+            if (pageNumber == 0) pageNumber = 1;
+            if (pageSize == 0) pageSize = 10;
+            if (all==true)
+            {
+                IEnumerable<Group> groups = groupRepository.GetList(x=>x.Status == "Active");
+                return new PagedList<Group>(groups.AsQueryable(), pageNumber, pageSize)
+                    .List.Select(x=> mapper.Map<GroupDTO>(x));
+            }
+
             Dictionary<int, Group> dic = new Dictionary<int, Group>();
             if (NumberOfMembers != null)
             {
@@ -68,12 +78,14 @@ namespace FunTrip.Controllers
                         dic.Add(group.Id, group);
                     }
             }
-            return dic.Values.Select(x => mapper.Map<GroupDTO>(x));
+                    PagedList<Group> pagedList = new PagedList<Group>(dic.Values.AsQueryable(), pageNumber, pageSize);
+            IEnumerable<GroupDTO> groupDTOs = pagedList.List.Select(x => mapper.Map<GroupDTO>(x));
+            return groupDTOs;
         }
-        [HttpPut("")]
-        public string update([FromBody] GroupDTO dto)
+        [HttpPut("{id}")]
+        public string update(int id,[FromBody] GroupDTO dto)
         {
-            Group group = groupRepository.Get(dto.Id);
+            Group group = groupRepository.Get(id);
             group.Phone = dto.Phone;
             group.GroupName = dto.GroupName;
             group.ManagerId = dto.ManagerId;

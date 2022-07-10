@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using BusinessObject.Models;
 using System.Linq.Expressions;
+using DataAccess.Paging;
+
 namespace DataAccess.IRepository
 {
     public interface IDistrictRepository

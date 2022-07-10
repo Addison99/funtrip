@@ -21,7 +21,7 @@ namespace DataAccess.Repository
         void AddRelations(Vehicle vehicle)
         {
             if (vehicle == null) return;
-            if (vehicle.Drivers == null) vehicle.Drivers = DriverDAO.Instance.GetAll(x => x.VehicleId == vehicle.Id).ToList();
+            if (vehicle.Driver == null) vehicle.Driver = DriverDAO.Instance.Get(x => x.VehicleId == vehicle.Id);
             if (vehicle.Category == null) vehicle.Category = CategoryDAO.Instance.Get(x =>x.Id == vehicle.CategoryId);
         }
         public Vehicle Get(int id)

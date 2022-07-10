@@ -9,7 +9,7 @@ namespace BusinessObject.Models
     {
         public Employee()
         {
-            Orders = new HashSet<Order>();
+            Bookings = new HashSet<Booking>();
         }
 
         public int Id { get; set; }
@@ -20,6 +20,6 @@ namespace BusinessObject.Models
         public int? AccountId { get; set; }
 
         public virtual Account Account { get; set; }
-        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Booking> Bookings { get; set; }
     }
 }

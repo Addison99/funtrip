@@ -7,9 +7,9 @@ using BusinessObject.Models;
 
 namespace DataAccess.DAO
 {
-    public class OrderDAO : EntityDAO<Order>
+    public class BookingDAO : EntityDAO<Booking>
     {
-        public OrderDAO(FunTripContext dBContext) : base(dBContext)
+        public BookingDAO(FunTripContext dBContext) : base(dBContext)
         {
         }
     }

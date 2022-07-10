@@ -9,7 +9,7 @@ namespace BusinessObject.Models
     {
         public AreaGroup()
         {
-            Orders = new HashSet<Order>();
+            Bookings = new HashSet<Booking>();
         }
 
         public int Id { get; set; }
@@ -19,6 +19,6 @@ namespace BusinessObject.Models
 
         public virtual Area Area { get; set; }
         public virtual Group Group { get; set; }
-        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Booking> Bookings { get; set; }
     }
 }

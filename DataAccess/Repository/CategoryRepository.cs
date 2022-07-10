@@ -22,7 +22,7 @@ namespace DataAccess.Repository
         }
         void AddRelations(Category category)
         {
-            if(category.Vehicles==null) category.Vehicles = VehicleDAO.Instance.GetAll(x => x.CategoryId == category.Id).ToList();
+            if(category.Vehicles==null || category.Vehicles.Count ==0) category.Vehicles = VehicleDAO.Instance.GetAll(x => x.CategoryId == category.Id).ToList();
         }
         public Category Get(int id)
         {

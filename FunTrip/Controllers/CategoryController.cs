@@ -9,9 +9,10 @@ using System.Linq;
 using FunTrip.DTOs;
 using AutoMapper;
 using System;
+using DataAccess.Paging;
 namespace FunTrip.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/categories")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
@@ -35,16 +36,29 @@ namespace FunTrip.Controllers
             try
             {
                 categoryRepository.Update(category);
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return ex.Message.ToString();
             }
             return "OK";
         }
         [HttpGet("")]
-        public IEnumerable<CategoryDTO> search()
+        public IEnumerable<CategoryDTO> search(int pageNumber, int pageSize)
         {
-            return categoryRepository.GetList(null).Select(x=> mapper.Map<CategoryDTO>(x));
+            if (pageNumber == 0) pageNumber = 1;
+            if (pageSize == 0) pageSize = 10;
+            PagingParams pagingParams = new PagingParams()
+            {
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            };
+            PagedList<Category> pagedList = new PagedList<Category>(categoryRepository.GetList(null).AsQueryable(), pageNumber, pageSize);
+            IEnumerable<CategoryDTO> categoryDTOs = pagedList.List.Select
+                (
+                    x => mapper.Map<CategoryDTO>(x)
+                    );
+            return categoryDTOs;
         }
         [HttpPost("")]
         public string create([FromBody] CategoryDTO dto)
@@ -54,14 +68,15 @@ namespace FunTrip.Controllers
             categoryRepository.Create(category);
             return "OK";
         }
-        [HttpPut("")]
-        public string update([FromBody] CategoryDTO dto)
+        [HttpPut("{id}")]
+        public string update([FromRoute]int id, [FromBody] CategoryDTO dto)
         {
-            Category cate = categoryRepository.Get(dto.Id);
+            Category cate = categoryRepository.Get(id);
             try
             {
                 categoryRepository.Update(cate);
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return ex.Message.ToString();
             }

@@ -8,9 +8,10 @@ using System.Collections.Generic;
 using System.Linq;
 using FunTrip.DTOs;
 using AutoMapper;
+using DataAccess.Paging;
 namespace FunTrip.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/cities")]
     [ApiController]
     public class CityController : ControllerBase
     {
@@ -21,6 +22,7 @@ namespace FunTrip.Controllers
             _cityRepository = cityRepository;
             _mapper = mapper;
         }
+        /*
         [HttpGet("{id}")]
         public CityDTO get(int id)
         {
@@ -34,11 +36,18 @@ namespace FunTrip.Controllers
             _cityRepository.Update(city);
             return "OK";
         }
-        [HttpGet("")]
-        public IEnumerable<CityDTO> search(string? name)
+        [HttpGet("{pageNumber}/{pageSize}")]
+        public IEnumerable<CityDTO> search(string? name, int pageNumber, int pageSize)
         {
-            return _cityRepository.GetList(x=> x.City1.Contains(name) && x.Status == "Active")
-                .Select(x => _mapper.Map<CityDTO>(x));
+            PagingParams pagingParams = new PagingParams()
+            {
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            };
+            if (name == null) name = "";
+            PagedList<City> pagedList = new PagedList<City>(_cityRepository.GetList(x => x.City1.Contains(name) && x.Status == "Active").AsQueryable(), pageNumber, pageSize);
+            IEnumerable<CityDTO> cityDTOs = pagedList.List.Select(x => _mapper.Map<CityDTO>(x));
+            return cityDTOs;
         }
         [HttpPost("")]
         public string create([FromBody] CityDTO dto)
@@ -48,13 +57,13 @@ namespace FunTrip.Controllers
             _cityRepository.Create(city);
             return "Ok";
         }
-        [HttpPut("")]
-        public string update([FromBody] CityDTO dto)
+        [HttpPut("{id}")]
+        public string update(int id,[FromBody] CityDTO dto)
         {
-            City city = _cityRepository.Get(dto.Id);
+            City city = _cityRepository.Get(id);
             city.City1 = dto.City1;
             _cityRepository.Update(city);
             return "OK";
-        }
+        }*/
     }
 }

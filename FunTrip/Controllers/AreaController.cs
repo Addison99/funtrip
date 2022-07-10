@@ -9,19 +9,22 @@ using System.Linq;
 using FunTrip.DTOs;
 using AutoMapper;
 using System;
+using DataAccess.Paging;
 
 namespace FunTrip.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/areas")]
     [ApiController]
     public class AreaController : ControllerBase
     {
         IAreaRepository areaRepository;
+        IDistrictRepository districtRepository;
         IMapper mapper;
-        public AreaController (IMapper mapper, IAreaRepository areaRepository)
+        public AreaController (IMapper mapper, IAreaRepository areaRepository, IDistrictRepository districtRepository)
         {
             this.mapper = mapper;
             this.areaRepository = areaRepository;
+            this.districtRepository = districtRepository;
         }
         [HttpGet("{id}")]
         public AreaDTO get(int id)
@@ -33,11 +36,25 @@ namespace FunTrip.Controllers
         {
             Area area = areaRepository.Get(id);
             area.Status = "Inactive";
+            areaRepository.Update(area);    
             return "Delete success";
         }
         [HttpGet("")]
-        public IEnumerable<AreaDTO> search(string? ApartmentName, string? DistrictName, int? numberOfGroups)
+        public IEnumerable<AreaDTO> search(string? ApartmentName, string? Address, int? DistrictId, string? DistrictName, int? numberOfGroups, bool? all ,int pageNumber,int pageSize)
         {
+            if (pageNumber == 0) pageNumber = 1;
+            if (pageSize == 0) pageSize = 10;
+
+            if (all==true)
+            {
+                PagedList<Area> pagedList1 = new PagedList<Area>(areaRepository.GetList(x => x.Status == "Active").AsQueryable()
+                    , pageNumber, pageSize);
+                IEnumerable<AreaDTO> listDTO1 = pagedList1.List.Select
+                (
+                    x => mapper.Map<AreaDTO>(x)
+                    );
+                return listDTO1;
+            }
             Dictionary<int, Area> dic = new Dictionary<int, Area>();
             if (ApartmentName != null)
             {
@@ -60,8 +77,15 @@ namespace FunTrip.Controllers
                 foreach (Area area in areas)
                     if (!dic.ContainsKey(area.Id)) dic.Add(area.Id, area);
             }
-            return dic.Values.Select(x => mapper.Map<AreaDTO>(x));
+            
+            PagedList<Area> pagedList = new PagedList<Area>(dic.Values.AsQueryable(),pageNumber,pageSize);
+            IEnumerable<AreaDTO> listDTO = pagedList.List.Select
+                (
+                    x => mapper.Map<AreaDTO>(x)
+                    );
+            return listDTO;
         }
+        
         [HttpPost("")]
         public string create([FromBody] AreaDTO dto)
         {
@@ -70,15 +94,16 @@ namespace FunTrip.Controllers
             areaRepository.Create(area);
             return "Create Success";
         }
-        [HttpPut("")]
-        public string update([FromBody] AreaDTO dto)
+        [HttpPut("{id}")]
+        public string update([FromRoute]int id,[FromBody] AreaDTO dto)
         {
-            Area area = areaRepository.Get(dto.Id);
+            Area area = areaRepository.Get(id);
             try
             {
                 area.Address = dto.Address;
                 area.ApartmentName = dto.ApartmentName;
                 area.DistrictId = dto.DistrictId;
+                area.District = districtRepository.Get((int)dto.DistrictId);
                 areaRepository.Update(area);
             }catch(Exception ex)
             {
@@ -86,5 +111,6 @@ namespace FunTrip.Controllers
             }
             return "Update Success";
         }
+        
     }
 }

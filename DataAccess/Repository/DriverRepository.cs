@@ -21,8 +21,8 @@ namespace DataAccess.Repository
         {
             if (driver == null) return;
             if (driver.Group == null) driver.Group = GroupDAO.Instance.Get(x => x.Id == driver.GroupId);
-            if (driver.Vehicle ==null) driver.Vehicle = VehicleDAO.Instance.Get(x => x.Id == driver.VehicleId);
-            if (driver.Orders == null) driver.Orders = OrderDAO.Instance.GetAll(x => x.DriverId == driver.Id).ToList();
+            if (driver.Vehicles.Count ==0) driver.Vehicles = VehicleDAO.Instance.GetAll(x => x.Id == driver.VehicleId).ToList();
+            if (driver.Bookings.Count == 0) driver.Bookings = BookingDAO.Instance.GetAll(x => x.DriverId == driver.Id).ToList();
             if (driver.Account == null) driver.Account = AccountDAO.Instance.Get(x => x.Id == driver.AccountId);
         }
         public Driver Get(int id)

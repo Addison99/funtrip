@@ -9,12 +9,13 @@ using System.Linq;
 using AutoMapper;
 using FunTrip.DTOs;
 using System;
+using DataAccess.Paging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace FunTrip.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/employees")]
     [ApiController]
     public class EmployeeController : ControllerBase
     {
@@ -34,10 +35,20 @@ namespace FunTrip.Controllers
             Employee employee = employeeRepository.Get(id);
             return mapper.Map<EmployeeDTO>(employee);
         }
-        [HttpGet("{name}")]
-        public IEnumerable<EmployeeDTO> getlist(string name)
+        [HttpGet("")]
+        public IEnumerable<EmployeeDTO> getlist(string name, int pageNumber, int pageSize)
         {
-            return employeeRepository.GetList(x=> x.FullName.Contains(name) && x.Account.Status =="Active").Select(x=>mapper.Map<EmployeeDTO>(x));
+            if (pageNumber == 0) pageNumber = 1;
+            if (pageSize == 0) pageSize = 10;
+            PagingParams pagingParams = new PagingParams()
+            {
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            };
+            if (name == null || name.Trim().Length == 0) name = "";
+            PagedList<Employee> pagedList = new PagedList<Employee>(employeeRepository.GetList(x=> x.FullName.Contains(name) && x.Account.Status =="Active").AsQueryable(), pageNumber, pageSize);
+            IEnumerable<EmployeeDTO> employeeDTOs = pagedList.List.Select(x => mapper.Map<EmployeeDTO>(x));
+            return employeeDTOs; 
         }
         [HttpDelete("{id}")]
         public string delete(int id)
@@ -57,13 +68,15 @@ namespace FunTrip.Controllers
                 Username = dto.Username,
                 Email = dto.Gmail,
                 Password = dto.Password,
-                Status = "Active"
+                Status = "Active",
+                RoleId = 2
             };
             try
             {
                 accountRepository.Create(account);
                 int id = accountRepository.GetMax();
                 employee.AccountId = id;
+                employee.Id = employeeRepository.getMax();
                 employeeRepository.Create(employee);
             }catch (Exception ex)
             {
@@ -71,13 +84,13 @@ namespace FunTrip.Controllers
             }
             return "Success";
         }
-        [HttpPut("")]
-        public string update([FromBody] EmployeeDTO dto)
+        [HttpPut("{id}")]
+        public string update(int id,[FromBody] EmployeeDTO dto)
         {
             Employee employee = mapper.Map<Employee>(dto);
             try
             {
-                Account acc = accountRepository.Get((int)employee.AccountId);
+                Account acc = accountRepository.Get(id);
                 acc.Password = dto.Password;
                 acc.Email = dto.Gmail;
                 employee.Account = acc;

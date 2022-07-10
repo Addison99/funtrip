@@ -10,7 +10,7 @@ using BusinessObject.Models;
 using DataAccess.DAO;
 namespace FunTrip.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/testau")]
     [ApiController]
     public class TestAuController : ControllerBase
     {

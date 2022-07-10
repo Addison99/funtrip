@@ -8,10 +8,11 @@ using System.Collections.Generic;
 using System.Linq;
 using FunTrip.DTOs;
 using AutoMapper;
+using DataAccess.Paging;
 
 namespace FunTrip.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/districts")]
     [ApiController]
     public class DistrictController : ControllerBase
     {
@@ -35,13 +36,27 @@ namespace FunTrip.Controllers
             districtRepository.Update(district);
         }
         [HttpGet("")]
-        public IEnumerable<DistrictDTO> search(string? name, int? numberofareas)
+        public IEnumerable<DistrictDTO> search(string? name, int? numberofareas,bool all, int pageNumber,int pageSize)
         {
+            if (pageNumber == 0) pageNumber = 1;
+            if (pageSize == 0) pageSize = 10;
+            PagingParams pagingParams = new PagingParams()
+            {
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            };
+            if (all)
+            {
+                return  new PagedList<District>(
+                    districtRepository.GetList(null).AsQueryable(),pageNumber,pageSize)
+                    .List.Select(x=> mapper.Map<DistrictDTO>(x));
+                
+            }
             Dictionary<int,District> dic = new Dictionary<int,District>();
             if (numberofareas != null)
             {
-                IEnumerable<District> districts = districtRepository.GetList(x=> x.Areas.Count > numberofareas
-                 && x.Status== "Active");
+                IEnumerable<District> districts = districtRepository.GetList(x => x.Areas.Count > numberofareas
+                 && x.Status == "Active");
                 foreach (District district in districts)
                     if (!dic.ContainsKey(district.Id)) dic.Add(district.Id, district);
             }
@@ -52,12 +67,14 @@ namespace FunTrip.Controllers
                 foreach (District district in districts)
                     if (!dic.ContainsKey(district.Id)) dic.Add(district.Id, district);
             }
-            return dic.Values.Select(x => mapper.Map<DistrictDTO>(x));
+                        PagedList<District> pagedList = new PagedList<District>(dic.Values.AsQueryable(), pageNumber, pageSize);
+            IEnumerable<DistrictDTO> districtDTOs = pagedList.List.Select(x => mapper.Map<DistrictDTO>(x));
+            return districtDTOs;          
         }
-        [HttpPut("")]
-        public string update([FromBody] DistrictDTO dto)
+        [HttpPut("{id}")]
+        public string update(int id,[FromBody] DistrictDTO dto)
         {
-            District district = districtRepository.Get(dto.Id);
+            District district = districtRepository.Get(id);
             district.District1 = dto.District1;
             districtRepository.Update(district);
             return "OK";

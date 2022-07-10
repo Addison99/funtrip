@@ -22,8 +22,9 @@ namespace DataAccess.Repository
         }
         void AddRelations(Group group)
         {
-            if (group.AreaGroups == null) group.AreaGroups = AreaGroupDAO.Instance.GetAll(x => x.GroupId == group.Id).ToList();
-            if (group.Drivers == null) group.Drivers = DriverDAO.Instance.GetAll(x=> x.GroupId == group.Id).ToList();
+            if (group == null) return;
+            if (group.AreaGroups.Count == 0) group.AreaGroups = AreaGroupDAO.Instance.GetAll(x => x.GroupId == group.Id).ToList();
+            if (group.Drivers.Count == 0) group.Drivers = DriverDAO.Instance.GetAll(x=> x.GroupId == group.Id).ToList();
         }
         public Group Get(int id)
         {

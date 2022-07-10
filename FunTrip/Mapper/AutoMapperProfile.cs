@@ -39,10 +39,10 @@ namespace FunTrip.Mapper
 
             CreateMap<Driver, DriverDTO>()
                 .ForMember(des => des.GroupName, act => act.MapFrom(src => src.Group.GroupName))
-                .ForMember(des => des.VehicleName, act => act.MapFrom(src => src.Vehicle.VehicleName))
+                .ForMember(des => des.VehicleName, act => act.MapFrom(src => src.Vehicles.FirstOrDefault().VehicleName))
                 .ForMember(des => des.Email, act => act.MapFrom(src => src.Account.Email))
                 .ForMember(des => des.rate, act
-                   => act.MapFrom(src => src.Orders.Average(x=> x.Rate)));
+                   => act.MapFrom(src => src.Bookings.Average(x=> x.Rate)));
             CreateMap<DriverDTO, Driver>();
 
             CreateMap<Employee, EmployeeDTO>();
@@ -52,14 +52,13 @@ namespace FunTrip.Mapper
                 .ForMember(des => des.NumberOfAreas, act => act.MapFrom(src => src.AreaGroups.Count));
             CreateMap<GroupDTO, Group>();
 
-            CreateMap<Order, OrderDTO>()
+            CreateMap<Booking, OrderDTO>()
                 .ForMember(des => des.DriverName, act => act.MapFrom(src => src.Driver.FullName))
                 .ForMember(des => des.EmployeeName, act => act.MapFrom(src => src.Employee.FullName))
                 .ForMember(des => des.StartLoction, act => act.MapFrom(src => src.StartLocation.Area.ApartmentName))
-                .ForMember(des => des.UserName, act => act.MapFrom(src => src.User.FullName))
-                .ForMember(des => des.GroupName, act => act.MapFrom(src => src.Driver.Group.GroupName))
-                .ForMember(des => des.EndLocation, act => act.MapFrom(src => src.EndLocation.District));
-            CreateMap<OrderDTO, Order>();
+
+                .ForMember(des => des.GroupName, act => act.MapFrom(src => src.Driver.Group.GroupName));
+            CreateMap<OrderDTO, Booking>();
 
             CreateMap<Role, RoleDTO>();
             CreateMap<RoleDTO, Role>(); 
@@ -70,7 +69,7 @@ namespace FunTrip.Mapper
             CreateMap<UserDTO, User>();
 
             CreateMap<Vehicle, VehicleDTO>()
-                .ForMember(des => des.DriverName, act => act.MapFrom(src => src.Drivers.First().FullName))
+                .ForMember(des => des.DriverName, act => act.MapFrom(src => src.Driver.FullName))
                 .ForMember(des => des.CategoryName, act => act.MapFrom(src => src.Category.Category1));
             CreateMap<VehicleDTO, Vehicle>();   
         }

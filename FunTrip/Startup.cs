@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -18,6 +18,11 @@ using FunTrip.Mapper;
 using AutoMapper;
 using DataAccess.IRepository;
 using DataAccess.Repository;
+using BusinessObject.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 namespace FunTrip
 {
     public class Startup
@@ -32,8 +37,20 @@ namespace FunTrip
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(
+                options =>
+                {
+                    options.AddDefaultPolicy(
+                         builder => builder
+                                    .AllowAnyMethod()
+                                    .AllowAnyOrigin()
 
-            services.AddControllers(x=> x.AllowEmptyInputInBodyModelBinding = true);
+                                    .AllowAnyHeader()
+                         );
+
+                }
+                );
+            services.AddControllers(x => x.AllowEmptyInputInBodyModelBinding = true);
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new AutoMapperProfile());
@@ -48,18 +65,21 @@ namespace FunTrip
             services.AddSingleton<IAreaGroupRepository, AreaGroupRepository>();
             services.AddSingleton<IAreaRepository, AreaRepository>();
             services.AddSingleton<ICategoryRepository, CategoryRepository>();
-            services.AddSingleton<ICityRepository, CityRepository>();   
+            services.AddSingleton<ICityRepository, CityRepository>();
             services.AddSingleton<IDistrictOutsideRepository, DistrictOutsideRepository>();
             services.AddSingleton<IDistrictRepository, DistrictRepository>();
             services.AddSingleton<IDriverRepository, DriverRepository>();
             services.AddSingleton<IEmployeeRepository, EmployeeRepository>();
             services.AddSingleton<IGroupRepository, GroupRepository>();
             services.AddSingleton<IOrderRepository, OrderRepository>();
-            services.AddSingleton<IRoleRepository,RoleRepository>();
-            services.AddSingleton<IVehicleRepository,VehicleRepository>();  
+            services.AddSingleton<IRoleRepository, RoleRepository>();
+            services.AddSingleton<IVehicleRepository, VehicleRepository>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options => {
+
+
+                .AddJwtBearer(options =>
+                {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = false,
@@ -68,7 +88,8 @@ namespace FunTrip
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                     };
-                });
+                });            ;
+            //services.AddAuthentication()
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FunTrip", Version = "v1" });
@@ -91,16 +112,15 @@ namespace FunTrip
             }
 
             app.UseHttpsRedirection();
-            
+
             app.UseStaticFiles();
             app.UseRouting();
-
+            app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                
                 endpoints.MapControllers();
                 endpoints.MapSwagger();
             });

@@ -11,7 +11,6 @@ namespace BusinessObject.Models
         {
             Drivers = new HashSet<Driver>();
             Employees = new HashSet<Employee>();
-            Users = new HashSet<User>();
         }
 
         public int Id { get; set; }
@@ -24,6 +23,5 @@ namespace BusinessObject.Models
         public virtual Role Role { get; set; }
         public virtual ICollection<Driver> Drivers { get; set; }
         public virtual ICollection<Employee> Employees { get; set; }
-        public virtual ICollection<User> Users { get; set; }
     }
 }

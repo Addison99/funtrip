@@ -13,6 +13,11 @@ namespace DataAccess.Repository
 {
     public class EmployeeRepository : IEmployeeRepository
     {
+        public int getMax()
+        {
+            IEnumerable<Employee> employees = GetList(null);
+            return employees.Max(x => x.Id) + 1;
+        }
         public void Create(Employee Employee)=> EmployeeDAO.Instance.Create(Employee);
 
         public void Delete(int id)

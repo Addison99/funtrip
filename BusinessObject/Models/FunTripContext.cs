@@ -20,16 +20,13 @@ namespace BusinessObject.Models
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<Area> Areas { get; set; }
         public virtual DbSet<AreaGroup> AreaGroups { get; set; }
+        public virtual DbSet<Booking> Bookings { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
-        public virtual DbSet<City> Cities { get; set; }
         public virtual DbSet<District> Districts { get; set; }
-        public virtual DbSet<DistrictOutside> DistrictOutsides { get; set; }
         public virtual DbSet<Driver> Drivers { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<Group> Groups { get; set; }
-        public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
-        public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Vehicle> Vehicles { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -127,6 +124,57 @@ namespace BusinessObject.Models
                     .HasConstraintName("FK_Area_Group_Group");
             });
 
+            modelBuilder.Entity<Booking>(entity =>
+            {
+                entity.ToTable("Booking");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Address).HasMaxLength(200);
+
+                entity.Property(e => e.Cost).HasColumnType("money");
+
+                entity.Property(e => e.DriverId).HasColumnName("Driver_ID");
+
+                entity.Property(e => e.EmployeeId).HasColumnName("Employee_ID");
+
+                entity.Property(e => e.EndLocationId).HasColumnName("End_Location_ID");
+
+                entity.Property(e => e.EndTime).HasColumnType("datetime");
+
+                entity.Property(e => e.Feedback).HasMaxLength(200);
+
+                entity.Property(e => e.StartLocationId).HasColumnName("Start_Location_ID");
+
+                entity.Property(e => e.StartTime).HasColumnType("datetime");
+
+                entity.Property(e => e.Status).HasMaxLength(50);
+
+                entity.Property(e => e.UserId).HasColumnName("User_ID");
+
+                entity.Property(e => e.VehicleId).HasColumnName("Vehicle_ID");
+
+                entity.HasOne(d => d.Driver)
+                    .WithMany(p => p.Bookings)
+                    .HasForeignKey(d => d.DriverId)
+                    .HasConstraintName("FK_Order_Driver");
+
+                entity.HasOne(d => d.Employee)
+                    .WithMany(p => p.Bookings)
+                    .HasForeignKey(d => d.EmployeeId)
+                    .HasConstraintName("FK_Order_Employee");
+
+                entity.HasOne(d => d.StartLocation)
+                    .WithMany(p => p.Bookings)
+                    .HasForeignKey(d => d.StartLocationId)
+                    .HasConstraintName("FK_Order_Area_Group");
+
+                entity.HasOne(d => d.Vehicle)
+                    .WithMany(p => p.Bookings)
+                    .HasForeignKey(d => d.VehicleId)
+                    .HasConstraintName("FK_Booking_Vehicles");
+            });
+
             modelBuilder.Entity<Category>(entity =>
             {
                 entity.ToTable("Category");
@@ -136,19 +184,6 @@ namespace BusinessObject.Models
                 entity.Property(e => e.Category1)
                     .HasMaxLength(50)
                     .HasColumnName("Category");
-
-                entity.Property(e => e.Status).HasMaxLength(50);
-            });
-
-            modelBuilder.Entity<City>(entity =>
-            {
-                entity.ToTable("City");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.City1)
-                    .HasMaxLength(50)
-                    .HasColumnName("City");
 
                 entity.Property(e => e.Status).HasMaxLength(50);
             });
@@ -164,26 +199,6 @@ namespace BusinessObject.Models
                     .HasColumnName("District");
 
                 entity.Property(e => e.Status).HasMaxLength(50);
-            });
-
-            modelBuilder.Entity<DistrictOutside>(entity =>
-            {
-                entity.ToTable("District_Outside");
-
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("ID");
-
-                entity.Property(e => e.CityId).HasColumnName("City_ID");
-
-                entity.Property(e => e.District).HasMaxLength(50);
-
-                entity.Property(e => e.Status).HasMaxLength(50);
-
-                entity.HasOne(d => d.City)
-                    .WithMany(p => p.DistrictOutsides)
-                    .HasForeignKey(d => d.CityId)
-                    .HasConstraintName("FK_District_Outside_City");
             });
 
             modelBuilder.Entity<Driver>(entity =>
@@ -206,6 +221,10 @@ namespace BusinessObject.Models
 
                 entity.Property(e => e.GroupId).HasColumnName("Group_ID");
 
+                entity.Property(e => e.Img)
+                    .HasMaxLength(1000)
+                    .HasColumnName("img");
+
                 entity.Property(e => e.Password)
                     .HasMaxLength(50)
                     .HasColumnName("password");
@@ -227,11 +246,6 @@ namespace BusinessObject.Models
                     .WithMany(p => p.Drivers)
                     .HasForeignKey(d => d.GroupId)
                     .HasConstraintName("FK_Driver_Group");
-
-                entity.HasOne(d => d.Vehicle)
-                    .WithMany(p => p.Drivers)
-                    .HasForeignKey(d => d.VehicleId)
-                    .HasConstraintName("FK_Driver_Vehicles");
             });
 
             modelBuilder.Entity<Employee>(entity =>
@@ -281,63 +295,6 @@ namespace BusinessObject.Models
                 entity.Property(e => e.Status).HasMaxLength(50);
             });
 
-            modelBuilder.Entity<Order>(entity =>
-            {
-                entity.ToTable("Order");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.Address).HasMaxLength(200);
-
-                entity.Property(e => e.Cost).HasColumnType("money");
-
-                entity.Property(e => e.DriverId).HasColumnName("Driver_ID");
-
-                entity.Property(e => e.EmployeeId).HasColumnName("Employee_ID");
-
-                entity.Property(e => e.EndLocationId).HasColumnName("End_Location_ID");
-
-                entity.Property(e => e.EndTime).HasColumnType("datetime");
-
-                entity.Property(e => e.Feedback).HasMaxLength(200);
-
-                entity.Property(e => e.StartLocationId).HasColumnName("Start_Location_ID");
-
-                entity.Property(e => e.StartTime).HasColumnType("datetime");
-
-                entity.Property(e => e.Status).HasMaxLength(50);
-
-                entity.Property(e => e.UserId).HasColumnName("User_ID");
-
-                entity.Property(e => e.VehicleId).HasColumnName("Vehicle_ID");
-
-                entity.HasOne(d => d.Driver)
-                    .WithMany(p => p.Orders)
-                    .HasForeignKey(d => d.DriverId)
-                    .HasConstraintName("FK_Order_Driver");
-
-                entity.HasOne(d => d.Employee)
-                    .WithMany(p => p.Orders)
-                    .HasForeignKey(d => d.EmployeeId)
-                    .HasConstraintName("FK_Order_Employee");
-
-                entity.HasOne(d => d.EndLocation)
-                    .WithMany(p => p.Orders)
-                    .HasForeignKey(d => d.EndLocationId)
-                    .HasConstraintName("FK_Order_District_Outside");
-
-                entity.HasOne(d => d.StartLocation)
-                    .WithMany(p => p.Orders)
-                    .HasForeignKey(d => d.StartLocationId)
-                    .HasConstraintName("FK_Order_Area_Group");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.Orders)
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Order_User");
-            });
-
             modelBuilder.Entity<Role>(entity =>
             {
                 entity.ToTable("Role");
@@ -352,43 +309,19 @@ namespace BusinessObject.Models
                 entity.Property(e => e.Status).HasMaxLength(50);
             });
 
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.ToTable("User");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.AccountId).HasColumnName("Account_ID");
-
-                entity.Property(e => e.Creditcard).HasMaxLength(50);
-
-                entity.Property(e => e.FullName).HasMaxLength(50);
-
-                entity.Property(e => e.Gmail)
-                    .HasMaxLength(100)
-                    .HasColumnName("gmail");
-
-                entity.Property(e => e.Password)
-                    .HasMaxLength(50)
-                    .HasColumnName("password");
-
-                entity.Property(e => e.Username)
-                    .HasMaxLength(50)
-                    .HasColumnName("username");
-
-                entity.HasOne(d => d.Account)
-                    .WithMany(p => p.Users)
-                    .HasForeignKey(d => d.AccountId)
-                    .HasConstraintName("FK_User_Account");
-            });
-
             modelBuilder.Entity<Vehicle>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.CategoryId).HasColumnName("Category_ID");
 
+                entity.Property(e => e.DriverId).HasColumnName("DriverID");
+
                 entity.Property(e => e.GroupId).HasColumnName("Group_ID");
+
+                entity.Property(e => e.Img)
+                    .HasMaxLength(1000)
+                    .HasColumnName("img");
 
                 entity.Property(e => e.Manufacturer)
                     .HasMaxLength(50)
@@ -405,6 +338,11 @@ namespace BusinessObject.Models
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Vehicles_Category");
+
+                entity.HasOne(d => d.Driver)
+                    .WithMany(p => p.Vehicles)
+                    .HasForeignKey(d => d.DriverId)
+                    .HasConstraintName("FK_Vehicles_Driver");
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -8,11 +8,12 @@ using System.Collections.Generic;
 using System.Linq;
 using FunTrip.DTOs;
 using AutoMapper;
+using DataAccess.Paging;
 using System;
 
 namespace FunTrip.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/orders")]
     [ApiController]
     public class OrderController : ControllerBase
     {
@@ -31,19 +32,29 @@ namespace FunTrip.Controllers
         [HttpDelete("{id}")]
         public void delete(int id)
         {
-            Order order = orderRepository.Get(id);
+            Booking order = orderRepository.Get(id);
             order.Status = "Active";
         }
-        private void AddToDic(Dictionary<int,Order> dic, IEnumerable<Order> orders)
+        private void AddToDic(Dictionary<int, Booking> dic, IEnumerable<Booking> orders)
         {
-            foreach (Order order in orders)
+            foreach (Booking order in orders)
                 if (!dic.ContainsKey(order.Id)) dic.Add(order.Id, order);
         }
         [HttpGet]
-        public IEnumerable<OrderDTO> search(DateTime? starttime,DateTime? endtime,string? DriverName,
-            string? EmployeeName, string? UserName, string? GroupName, string? DistrictOutsideName)
+        public IEnumerable<OrderDTO> search(bool? all,DateTime? starttime,DateTime? endtime,string? DriverName,
+            string? EmployeeName, string? UserName, string? GroupName, int pageNumber, int pageSize)
         {
-            Dictionary<int,Order> dic = new Dictionary<int,Order>();
+            if (pageNumber == 0) pageNumber = 1;
+            if (pageSize == 0) pageSize = 10;
+            if (all == true) 
+            {
+                var orders = orderRepository.GetList(x => x.Id != null).ToList();
+                PagedList<Booking> pagedList1 = new PagedList<Booking>(orders.AsQueryable(), pageNumber, pageSize);
+                IEnumerable<OrderDTO> orderDTOs1 = pagedList1.List.Select(x => mapper.Map<OrderDTO>(x));
+                return orderDTOs1;
+            }
+
+            Dictionary<int, Booking> dic = new Dictionary<int, Booking>();
             if (starttime!=null && endtime != null)
             {
                 var orders = orderRepository.GetList(x => x.StartTime <= starttime && x.EndTime >= endtime);
@@ -59,35 +70,27 @@ namespace FunTrip.Controllers
                 var orders = orderRepository.GetList(x => x.Employee.FullName.Contains(EmployeeName));
                 AddToDic(dic, orders);
             }
-            if (UserName != null)
-            {
-                var orders = orderRepository.GetList(x => x.User.FullName.Contains(EmployeeName));
-                AddToDic(dic, orders);
-            }
             if (GroupName != null)
             {
                 var orders = orderRepository.GetList(x => x.StartLocation.Group.GroupName.Contains(GroupName));
                 AddToDic(dic, orders);
-            }
-            if (DistrictOutsideName != null)
-            {
-                var orders = orderRepository.GetList(x => x.EndLocation.District.Contains(DistrictOutsideName));
-                AddToDic(dic, orders);
-            }
-            return dic.Values.Select(x => mapper.Map<OrderDTO>(x));
+            }          
+                 PagedList<Booking> pagedList = new PagedList<Booking>(dic.Values.AsQueryable(), pageNumber, pageSize);
+            IEnumerable<OrderDTO> orderDTOs = pagedList.List.Select(x => mapper.Map<OrderDTO>(x));
+            return orderDTOs;
         }
         [HttpPost("")]
         public string Create([FromBody] OrderDTO dto)
         {
-            Order order = mapper.Map<Order>(dto);
+            Booking order = mapper.Map<Booking>(dto);
             order.Status = "Pending";
             orderRepository.Create(order);
             return "OK";
         }
-        [HttpPut("update")]
-        public string update([FromBody] OrderDTO dto)
+        [HttpPut("{id}")]
+        public string update(int id,[FromBody] OrderDTO dto)
         {
-            Order order = orderRepository.Get(dto.Id);
+            Booking order = orderRepository.Get(dto.Id);
             order.Address = dto.Address;
             order.Feedback = dto.Feedback;
             order.Rate = dto.Rate;

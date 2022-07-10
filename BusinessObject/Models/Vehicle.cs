@@ -9,7 +9,7 @@ namespace BusinessObject.Models
     {
         public Vehicle()
         {
-            Drivers = new HashSet<Driver>();
+            Bookings = new HashSet<Booking>();
         }
 
         public int Id { get; set; }
@@ -18,8 +18,11 @@ namespace BusinessObject.Models
         public int CategoryId { get; set; }
         public int? GroupId { get; set; }
         public string Status { get; set; }
+        public string Img { get; set; }
+        public int? DriverId { get; set; }
 
         public virtual Category Category { get; set; }
-        public virtual ICollection<Driver> Drivers { get; set; }
+        public virtual Driver Driver { get; set; }
+        public virtual ICollection<Booking> Bookings { get; set; }
     }
 }

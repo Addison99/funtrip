@@ -7,7 +7,7 @@ using BusinessObject.Models;
 using DataAccess.IRepository;
 using DataAccess.DAO;
 using System.Linq.Expressions;
-
+using DataAccess.Paging;
 
 namespace DataAccess.Repository
 {
@@ -21,7 +21,7 @@ namespace DataAccess.Repository
         void AddRelations(District district)
         {
             if (district == null) return;
-            if (district.Areas == null) district.Areas = AreaDAO.Instance.GetAll(x => x.DistrictId == district.Id).ToList();
+            if (district.Areas.Count ==0) district.Areas = AreaDAO.Instance.GetAll(x => x.DistrictId == district.Id).ToList();
         }
         public District Get(int id)
         {
