@@ -42,6 +42,8 @@ namespace DataAccess.Repository
             return orders;
         }
 
+        public IEnumerable<Booking> GetAllBookings() => BookingDAO.Instance.GetAll(null, "Driver");
+
         public void Update(Booking Order) => BookingDAO.Instance.Update(Order);
 
     }

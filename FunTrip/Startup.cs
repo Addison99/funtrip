@@ -44,7 +44,6 @@ namespace FunTrip
                          builder => builder
                                     .AllowAnyMethod()
                                     .AllowAnyOrigin()
-
                                     .AllowAnyHeader()
                          );
 

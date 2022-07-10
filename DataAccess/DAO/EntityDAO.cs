@@ -38,11 +38,20 @@ namespace DataAccess.DAO
             }
         }
 
-        public IQueryable<T> GetAll(Expression<Func<T, bool>> expression)
+        public IQueryable<T> GetAll(Expression<Func<T, bool>> expression, String includeProperties = null)
         {
             if (expression == null) return _dbSet;
-            else
-                return _dbSet.Where(expression);
+            
+            var query = _dbSet.Where(expression);
+            if (includeProperties != null)
+            {
+                foreach (var includedProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includedProp);
+                }
+            }
+
+            return query;
         }
 
         public T Get(Expression<Func<T, bool>> expression)
@@ -55,6 +64,8 @@ namespace DataAccess.DAO
         {
             if (entity != null)
             {
+                var _dbContext = new FunTripContext();
+                var _dbSet = _dbContext.Set<T>();
                 _dbSet.Add(entity);
                 _dbContext.SaveChanges();
             }
@@ -64,6 +75,8 @@ namespace DataAccess.DAO
         {
             if (entity != null)
             {
+                var _dbContext = new FunTripContext();
+                var _dbSet = _dbContext.Set<T>();
                 _dbSet.Remove(entity);
                 _dbContext.SaveChanges();
             }
@@ -72,6 +85,7 @@ namespace DataAccess.DAO
 
         public void Update(T entity)
         {
+            var _dbContext = new FunTripContext();
             _dbContext.Entry(entity).State = EntityState.Modified;
             _dbContext.SaveChanges();
         }

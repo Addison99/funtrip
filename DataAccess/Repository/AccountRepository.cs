@@ -24,7 +24,7 @@ namespace DataAccess.Repository
 
         public Account CheckLoginByMail(string mail) => AccountDAO.Instance.Get(x => x.Email == mail);
 
-        public void Create(Account account) =>AccountDAO.Instance.Create(account);
+        public void Create(Account account) => AccountDAO.Instance.Create(account);
 
         public void Delete(int id)
         {

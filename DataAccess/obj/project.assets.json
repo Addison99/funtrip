@@ -1487,6 +1487,7 @@
         "framework": ".NETCoreApp,Version=v5.0",
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "5.0.17",
+          "Microsoft.EntityFrameworkCore.Analyzers": "5.0.17",
           "Microsoft.EntityFrameworkCore.SqlServer": "5.0.17"
         },
         "compile": {
@@ -5721,34 +5722,32 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\acern\\.nuget\\packages\\": {}
+    "/Users/minhtiendang/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\acern\\source\\repos\\FunTrip\\DataAccess\\DataAccess.csproj",
+      "projectUniqueName": "/Users/minhtiendang/Desktop/funtrip/funtrip/DataAccess/DataAccess.csproj",
       "projectName": "DataAccess",
-      "projectPath": "C:\\Users\\acern\\source\\repos\\FunTrip\\DataAccess\\DataAccess.csproj",
-      "packagesPath": "C:\\Users\\acern\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\acern\\source\\repos\\FunTrip\\DataAccess\\obj\\",
+      "projectPath": "/Users/minhtiendang/Desktop/funtrip/funtrip/DataAccess/DataAccess.csproj",
+      "packagesPath": "/Users/minhtiendang/.nuget/packages/",
+      "outputPath": "/Users/minhtiendang/Desktop/funtrip/funtrip/DataAccess/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\acern\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/minhtiendang/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net5.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net5.0": {
           "targetAlias": "net5.0",
           "projectReferences": {
-            "C:\\Users\\acern\\source\\repos\\FunTrip\\BusinessObject\\BusinessObject.csproj": {
-              "projectPath": "C:\\Users\\acern\\source\\repos\\FunTrip\\BusinessObject\\BusinessObject.csproj"
+            "/Users/minhtiendang/Desktop/funtrip/funtrip/BusinessObject/BusinessObject.csproj": {
+              "projectPath": "/Users/minhtiendang/Desktop/funtrip/funtrip/BusinessObject/BusinessObject.csproj"
             }
           }
         }
@@ -5778,12 +5777,22 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[5.0.0, 5.0.0]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[5.0.0, 5.0.0]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.201/RuntimeIdentifierGraph.json"
       }
     }
   }

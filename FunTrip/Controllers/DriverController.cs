@@ -94,35 +94,33 @@ namespace FunTrip.Controllers
 
         }
         [HttpPost]
-        public async Task<String> Create([FromForm] DriverDTO driverDTO, [FromForm] IFormFile file)
+        public async Task<IActionResult> Create([FromBody] DriverDTO driverDTO, [FromForm] IFormFile file)
         {
-            try
-            {
                 Driver driver = mapper.Map<Driver>(driverDTO);
                 Account acc = new Account()
                 {
                     Password = driver.Password,
                     Username = driver.Username,
-                    Email = driver.Gmail,
+                    Email = driverDTO.Email,
                     RoleId = 3,
                     Status = "Active"
                 };
+
+                var checkLoginResult = accountRepository.GetList((account) => (account.Email.Equals(driverDTO.Email) || account.Username.Equals(driverDTO.Username)));
+                if (checkLoginResult.Count() > 0) return Unauthorized();
+
                 accountRepository.Create(acc);
                 int accID = accountRepository.GetMax();
                 driver.AccountId = accID;
-                await uploadFile(file);
                 if (file != null)
                 {
+                    await uploadFile(file);
                     driver.Img = "https:/merry.blob.core.windows.net/yume/" + file.FileName;
                 }
+
                 driverRepository.Create(driver);
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
             
-            return "Create Success";
+            return Ok();
         }
         [HttpPut("{id}")]
         public async Task<string> Update(int id, [FromForm] DriverDTO driverdto, [FromForm] IFormFile file)
@@ -182,8 +180,6 @@ namespace FunTrip.Controllers
         private async Task<String> uploadFile(IFormFile file)
         {
             var container = GetBlobContainerClient();
-            try
-            {
                 var blobClient = container.GetBlobClient(file.FileName);
                 using (var ms = new MemoryStream())
                 {
@@ -195,10 +191,5 @@ namespace FunTrip.Controllers
                 }
                 return "https:/merry.blob.core.windows.net/yume/" + file.FileName;
             }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
         }
-    }
 }

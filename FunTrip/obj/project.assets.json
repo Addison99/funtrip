@@ -2323,6 +2323,7 @@
         "framework": ".NETCoreApp,Version=v5.0",
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "5.0.17",
+          "Microsoft.EntityFrameworkCore.Analyzers": "5.0.17",
           "Microsoft.EntityFrameworkCore.SqlServer": "5.0.17"
         },
         "compile": {
@@ -7981,6 +7982,7 @@
       "Google.Apis.Auth >= 1.57.0",
       "Microsoft.AspNetCore.Authentication.Google >= 5.0.17",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 5.0.17",
+      "Microsoft.EntityFrameworkCore.Analyzers >= 5.0.17",
       "Microsoft.EntityFrameworkCore.SqlServer >= 5.0.17",
       "Microsoft.EntityFrameworkCore.Tools >= 5.0.17",
       "Microsoft.IdentityModel.Tokens >= 6.18.0",
@@ -7993,34 +7995,32 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\acern\\.nuget\\packages\\": {}
+    "/Users/minhtiendang/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\acern\\source\\repos\\FunTrip\\FunTrip\\FunTrip.csproj",
+      "projectUniqueName": "/Users/minhtiendang/Desktop/funtrip/funtrip/FunTrip/FunTrip.csproj",
       "projectName": "FunTrip",
-      "projectPath": "C:\\Users\\acern\\source\\repos\\FunTrip\\FunTrip\\FunTrip.csproj",
-      "packagesPath": "C:\\Users\\acern\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\acern\\source\\repos\\FunTrip\\FunTrip\\obj\\",
+      "projectPath": "/Users/minhtiendang/Desktop/funtrip/funtrip/FunTrip/FunTrip.csproj",
+      "packagesPath": "/Users/minhtiendang/.nuget/packages/",
+      "outputPath": "/Users/minhtiendang/Desktop/funtrip/funtrip/FunTrip/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\acern\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/minhtiendang/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net5.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net5.0": {
           "targetAlias": "net5.0",
           "projectReferences": {
-            "C:\\Users\\acern\\source\\repos\\FunTrip\\DataAccess\\DataAccess.csproj": {
-              "projectPath": "C:\\Users\\acern\\source\\repos\\FunTrip\\DataAccess\\DataAccess.csproj"
+            "/Users/minhtiendang/Desktop/funtrip/funtrip/DataAccess/DataAccess.csproj": {
+              "projectPath": "/Users/minhtiendang/Desktop/funtrip/funtrip/DataAccess/DataAccess.csproj"
             }
           }
         }
@@ -8052,6 +8052,10 @@
             "version": "[5.0.17, )"
           },
           "Microsoft.AspNetCore.Authentication.JwtBearer": {
+            "target": "Package",
+            "version": "[5.0.17, )"
+          },
+          "Microsoft.EntityFrameworkCore.Analyzers": {
             "target": "Package",
             "version": "[5.0.17, )"
           },
@@ -8104,6 +8108,20 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[5.0.0, 5.0.0]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.osx-x64",
+            "version": "[5.0.15, 5.0.15]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[5.0.0, 5.0.0]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -8112,7 +8130,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.201/RuntimeIdentifierGraph.json"
       }
     }
   }

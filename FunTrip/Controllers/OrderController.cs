@@ -24,11 +24,22 @@ namespace FunTrip.Controllers
             this.orderRepository = orderRepository;
             this.mapper = mapper;
         }
+
+        [HttpGet("lists")]
+        public IEnumerable<OrderDTO> getAll()
+        {
+            var list = orderRepository.GetList(null).Select(x => mapper.Map<OrderDTO>(x)).ToList();
+
+            return list;
+                
+        }
+
         [HttpGet("{id}")]
         public OrderDTO get(int id)
         {
             return mapper.Map<OrderDTO>(orderRepository.Get(id));
         }
+
         [HttpDelete("{id}")]
         public void delete(int id)
         {

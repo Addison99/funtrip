@@ -19,8 +19,11 @@ namespace FunTrip
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+                 {
+                     webBuilder
+                     .UseUrls($"http://localhost:2434")
+                     .UseIISIntegration();
+                     webBuilder.UseStartup<Startup>();
+                 });         
     }
 }
